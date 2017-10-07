@@ -36,21 +36,21 @@ A detailed history of the model, as well as the mathematical theory behind it, a
 The source code is currently hosted on GitHub at: https://github.com/federicomariamassari/willow-tree.
 Either clone or download the git repository. Then, on Command Window (Windows) or Terminal (OS X) navigate through folders `willow-tree/python-modules` and execute:
 
-```sh
+```shell
 $ python3 willowtree.py install
 ```
 
 or, if only Python 3 is present, simply:
-```sh
+```shell
 $ python willowtree.py install
 ```
 
 Then, within the Python environment, execute:
-```sh
+```python
 import willowtree
 ```
 or use `wt` as alias:
-```sh
+```python
 import willowtree as wt
 ```
 
