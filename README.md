@@ -3,6 +3,8 @@
 
 Curran, M. (2001): _[Willow Power: Optimizing Derivative Pricing Trees](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1590288)_
 
+<img src = 'handbook/img/willow.png' alt = 'willow-tree' width = '500'>
+
 ## What is the Willow Tree?
 The willow tree is a highly efficient, recombining lattice designed for fast and accurate pricing of derivative contracts. It models the standard Brownian motion directly, by means of a discrete time Markov chain, and the resulting estimate can serve as the basis for more complex processes, such as the geometric Brownian motion.
 
