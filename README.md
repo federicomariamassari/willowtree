@@ -74,4 +74,4 @@ Presently, `willowtree` only handles one-dimensional lattices, implemented accor
 - accounting for multi-dimensionality.
 
 ## Known Issues
-- Inability to choose gamma = 0, with gamma in [0, 1], as parameter in the model.
+- Inability to choose gamma = 0, with gamma in [0, 1], as parameter value in the model. Commit `f014907` partially fixes the issue by increasing gamma by steps of 1e-9 (first two seconds of runtime), 1e-6 (additional 8 seconds), and 1e-2 until the optimisation is successful. This method ensures that a solution is found with a value of gamma as close as possible to the one supplied by the user, and in a reasonable amount of time.
