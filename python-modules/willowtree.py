@@ -1,5 +1,5 @@
 def sampling(n, gamma, algorithm = 'kurtosis-matching'):
-    
+
     import time
     import numpy as np
     from scipy import stats, optimize
@@ -39,6 +39,15 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
 
         return z
 
+    def test(q, z, algorithm):
+        mean = np.isclose(q @ z, 0, 1e-15)
+        variance = np.isclose(q @ z ** 2, 1, 1e-15)
+        if algorithm in ('kurtosis-matching', 'KRT', 'krt'):
+            kurtosis = np.isclose(q @ z ** 4, 3, 1e-15)
+            return np.array([mean, variance, kurtosis]).all()
+        else:
+            return np.array([mean, variance]).all()
+
     tic = time.time()
 
     initial_n = n
@@ -59,11 +68,12 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
         q, Z = aux(n, gamma)
 
     z = aux2(q, Z, algorithm)
+    test = test(q, z.x, algorithm)
 
     start = time.time()
     counter = 0
 
-    while (z.status != 0) | (z.fun > 1):
+    while (z.status != 0) | (z.fun > 1) | (test != True):
         if initial_gamma < 1:
             if (gamma < 1) & (counter <= 1):
                 if time.time() < start + 2:
@@ -74,17 +84,20 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                     gamma += 1e-2
                 q, Z = aux(n, gamma)
                 z = aux2(q, Z, algorithm)
+                test = test(q, z.x, algorithm)
             elif (gamma == 1) & (counter <= 1):
                 gamma = 0
                 counter +=1
                 q, Z = aux(n, gamma)
                 z = aux2(q, Z, algorithm)
+                test = test(q, z.x, algorithm)
             else:
                 gamma = initial_gamma
                 counter = 0
                 n += 1
                 q, Z = aux(n, gamma)
                 z = aux2(q, Z, algorithm)
+                test = test(q, z.x, algorithm)
         else:
             if (gamma > 0) & (counter <= 1):
                 if time.time() < start + 2:
@@ -95,11 +108,13 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                     gamma -= 1e-2
                 q, Z = aux(n, gamma)
                 z = aux2(q, Z, algorithm)
+                test = test(q, z.x, algorithm)
             elif (gamma == 0) & (counter <= 1):
                 gamma = 1
                 counter +=1
                 q, Z = aux(n, gamma)
                 z = aux2(q, Z, algorithm)
+                test = test(q, z.x, algorithm)
             else:
                 gamma = initial_gamma
                 counter = 0
@@ -107,6 +122,7 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                 n += 1
                 q, Z = aux(n, gamma)
                 z = aux2(q, Z, algorithm)
+                test = test(q, z.x, algorithm)
 
     if (n != initial_n) | (gamma != initial_gamma):
         print('Optimisation could not be terminated with supplied parameters.')
