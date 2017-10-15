@@ -163,6 +163,17 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
                              options = options)
         return P
 
+    def interpolate(P_min, P_max, alpha_min, alpha_max, alpha_interp):
+        x1 = 1 / np.sqrt(1+alpha_min)
+        x2 = 1 / np.sqrt(1+alpha_max)
+        x3 = 1 / np.sqrt(1+alpha_interp)
+
+        coeff_min = (x3-x2) / (x1-x2)
+        coeff_max = (x1-x3) / (x1-x2)
+
+        return coeff_min*P_min + coeff_max*P_max
+
+
     initial_tol = tol
 
     u = np.ones(len(z), dtype = np.int)
@@ -212,5 +223,21 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
             print('P[{}] successfully generated.'.format(i))
 
         tol = initial_tol
+
+        failure = np.nonzero(flag)[0]
+        success = np.nonzero(flag + 1)[0]
+
+        try:
+            minvec = [max(x for x in success if x < failure[i]) for i \
+                      in range(len(failure))]
+            maxvec = [min(x for x in success if x > failure[i]) \
+                      for i in range(len(failure))]
+
+            Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
+                                   alpha[minvec[i]], alpha[maxvec[i]],
+                                   alpha[failure[i]]) for i \
+                                   in range(len(failure))]
+        except ValueError:
+            print('Bad last matrix in the chain. Impossible to interpolate.')                  
 
     return Px
