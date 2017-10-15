@@ -136,3 +136,81 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
     print('Total running time: {:.2f}s'.format(toc))
 
     return q, z.x
+
+
+def lp(z, q, t, tol = 1e-12, extra_precision = False):
+
+    def objective(z, a, beta, normalize):
+        F = (np.abs(a-beta*a.transpose()) ** 3).transpose()\
+            .reshape(len(z)**2)
+        c = F * normalize
+        return c
+
+    def beq(q, u, z, beta, Aeq):
+        beq = np.array([u, beta*z, (beta**2)*r + (1-beta**2)*u,
+                        q]).reshape(len(Aeq))
+        return beq
+
+    def transition_matrix(z, c, Aeq, beq, tol, extra_precision):
+        if extra_precision:
+            bounds = (0, 1)
+        else:
+            bounds = (0, None)
+
+        options = {'maxiter': 1e4, 'tol': tol, 'disp': False}
+        P = optimize.linprog(c, A_eq = Aeq, b_eq = beq,
+                             bounds = bounds, method = 'simplex',
+                             options = options)
+        return P
+
+    initial_tol = tol
+
+    u = np.ones(len(z), dtype = np.int)
+    r = z ** 2
+    h = t[2:] - t[1:-1]
+    alpha = h / t[1:-1]
+    beta = 1 / np.sqrt(1+alpha)
+
+    a = z[:, np.newaxis] @ np.ones(len(z))[np.newaxis]
+    normalize = np.kron(q, np.ones(len(z)))
+
+    c = np.array([objective(z, a, beta[i], normalize) \
+                  for i in range(len(h))])
+
+    Aeq = np.vstack([np.kron(np.eye(len(z)), u),
+                     np.kron(np.eye(len(z)), z),
+                     np.kron(np.eye(len(z)), r),
+                     np.kron(q, np.eye(len(z)))])
+
+    beq = np.array([beq(q, u, z, beta[i], Aeq) \
+                    for i in range(len(h))])
+
+    Px = np.array([np.zeros([len(z), len(z)]) \
+         for i in range(len(h))])
+
+    flag = np.zeros(len(h), dtype = np.int)
+
+    for i in range(len(h)):
+        P = transition_matrix(z, c[i], Aeq, beq[i], tol,
+                              extra_precision)
+
+        while (P.status != 0) | (P.fun < 0) | (P.fun > 1):
+            if tol < 1e-3:
+                tol *= 10
+                P = transition_matrix(z, c[i], Aeq, beq[i], tol,
+                                      extra_precision)
+            else:
+                flag[i] = -1
+                break
+
+        Px[i] = P.x.reshape(len(z), len(z))
+
+        if flag[i] == -1:
+            print('Warning: P[{}] wrongly specified.'.format(i))
+            print('Replacing with interpolated matrix if possible.')
+        else:
+            print('P[{}] successfully generated.'.format(i))
+
+        tol = initial_tol
+
+    return Px
