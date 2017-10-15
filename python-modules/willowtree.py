@@ -35,7 +35,7 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
         bounds = np.column_stack((Z[:-1], Z[1:]))
         options = {'disp': False, 'ftol': 1e-15, 'maxiter': 1e4}
 
-        z = optimize.minimize(fun, x0, bounds = bounds, options = options, \
+        z = optimize.minimize(fun, x0, bounds = bounds, options = options,
                               tol = 1e-15, constraints = constraints)
 
         return z
