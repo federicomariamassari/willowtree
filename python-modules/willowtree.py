@@ -228,16 +228,40 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
         success = np.nonzero(flag + 1)[0]
 
         try:
-            minvec = [max(x for x in success if x < failure[i]) for i \
-                      in range(len(failure))]
-            maxvec = [min(x for x in success if x > failure[i]) \
-                      for i in range(len(failure))]
+        minvec = np.array([], dtype = np.int)
+        maxvec = minvec
 
-            Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
+        for i in range(len(failure)):
+            minvec = np.append(minvec, [max(x for x in success \
+                                        if x < failure[i])])
+            maxvec = np.append(maxvec, [min(x for x in success \
+                                        if x > failure[i])])
+
+    except ValueError:
+        pass
+
+    threshold = max(minvec) + 1
+    minvec = minvec[:len(maxvec)]
+    failure = failure[failure < threshold]
+
+    try:
+        Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
                                    alpha[minvec[i]], alpha[maxvec[i]],
                                    alpha[failure[i]]) for i \
-                                   in range(len(failure))]
-        except ValueError:
-            print('Bad last matrix in the chain. Impossible to interpolate.')                  
+                       in range(len(failure))]
+    except ValueError:
+        pass
 
-    return Px
+    for i in failure:
+        print('Interpolation of P[{}] successful.'.format(i))
+
+    flag[failure] = 0
+    success = np.nonzero(flag + 1)[0]
+    Px = Px[success]
+
+    t_new = t[range(len(success)+2)]
+
+    if t_new[-1] != t[-1]:
+        print('Warning: t has been shortened. T = {:.2f}'.format(t_new[-1])) 
+
+    return Px, t_new
