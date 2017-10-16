@@ -242,7 +242,7 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
 
     threshold = max(minvec) + 1
     minvec = minvec[:len(maxvec)]
-    failure = failure[failure < threshold]
+    failure = failure[failure <= threshold]
 
     try:
         Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
