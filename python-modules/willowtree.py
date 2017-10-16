@@ -227,7 +227,7 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
         failure = np.nonzero(flag)[0]
         success = np.nonzero(flag + 1)[0]
 
-        try:
+    try:
         minvec = np.array([], dtype = np.int)
         maxvec = minvec
 
@@ -262,6 +262,6 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
     t_new = t[range(len(success)+2)]
 
     if t_new[-1] != t[-1]:
-        print('Warning: t has been shortened. T = {:.2f}'.format(t_new[-1])) 
+        print('Warning: t has been shortened. T = {:.2f}'.format(t_new[-1]))
 
     return Px, t_new
