@@ -135,7 +135,7 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
     toc = time.time() - tic
     print('Total running time: {:.2f}s'.format(toc))
 
-    return q, z.x
+    return q, z.x, gamma
 
 
 def lp(z, q, t, tol = 1e-12, extra_precision = False):
