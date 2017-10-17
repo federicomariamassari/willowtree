@@ -140,6 +140,10 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
 
 def lp(z, q, t, tol = 1e-12, extra_precision = False):
 
+    import time
+    import numpy as np
+    from scipy import optimize
+
     def objective(z, a, beta, normalize):
         F = (np.abs(a-beta*a.transpose()) ** 3).transpose()\
             .reshape(len(z)**2)
@@ -205,6 +209,7 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
         P = transition_matrix(z, c[i], Aeq, beq[i], tol,
                               extra_precision)
 
+    if type(P.x) != np.float:
         while (P.status != 0) | (P.fun < 0) | (P.fun > 1) \
             | (P.x[P.x < 0]).any() | (P.x[P.x > 1]).any():
 
@@ -217,6 +222,8 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
                 break
 
         Px[i] = P.x.reshape(len(z), len(z))
+    else:
+        flag[i] = -1
 
         if flag[i] == -1:
             print('Warning: P[{}] wrongly specified.'.format(i))
