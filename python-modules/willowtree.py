@@ -240,22 +240,32 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
     except ValueError:
         pass
 
-    threshold = max(minvec) + 1
-    minvec = minvec[:len(maxvec)]
-    failure = failure[failure <= threshold]
-
-    try:
-        Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
-                                   alpha[minvec[i]], alpha[maxvec[i]],
-                                   alpha[failure[i]]) for i \
-                       in range(len(failure))]
-    except ValueError:
+    if flag[-1] == -1:
+        threshold = max(minvec) + 1
+        failure = failure[failure < threshold]
+    elif (flag == -1).any():
+        threshold = max(maxvec)
+        failure = failure[failure < threshold]
+    else:
         pass
 
-    for i in failure:
-        print('Interpolation of P[{}] successful.'.format(i))
+    minvec = minvec[:len(maxvec)]
 
-    flag[failure] = 0
+    if (flag == -1).any():
+        try:
+            Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
+                           alpha[minvec[i]], alpha[maxvec[i]],
+                           alpha[failure[i]]) for i \
+                           in range(len(failure))]
+        except ValueError:
+            pass
+
+        for i in failure:
+            print('Interpolation of P[{}] successful.'.format(i))
+        flag[failure] = 0
+    else:
+        pass
+
     success = np.nonzero(flag + 1)[0]
     Px = Px[success]
 
