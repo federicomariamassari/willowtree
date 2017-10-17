@@ -205,7 +205,9 @@ def lp(z, q, t, tol = 1e-12, extra_precision = False):
         P = transition_matrix(z, c[i], Aeq, beq[i], tol,
                               extra_precision)
 
-        while (P.status != 0) | (P.fun < 0) | (P.fun > 1):
+        while (P.status != 0) | (P.fun < 0) | (P.fun > 1) \
+            | (P.x[P.x < 0]).any() | (P.x[P.x > 1]).any():
+
             if tol < 1e-3:
                 tol *= 10
                 P = transition_matrix(z, c[i], Aeq, beq[i], tol,
