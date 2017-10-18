@@ -6,12 +6,14 @@
 
         def aux(n, gamma):
             i = np.arange(1, 0.5*(n+1), dtype = int)
-            i = np.hstack([i, i[::-1]] if n % 2 == 0 else [i, i[-1]+1, i[::-1]])
+            i = np.hstack([i, i[::-1]] if n % 2 == 0 \
+                           else [i, i[-1]+1, i[::-1]])
 
             q = (i-0.5)**gamma / n
             q = q / np.sum(q)
 
-            Z = np.hstack([[-np.inf], stats.norm.ppf(np.cumsum(q[:-1])), [np.inf]])
+            Z = np.hstack([[-np.inf], stats.norm.ppf(np.cumsum(q[:-1])), \
+                           [np.inf]])
 
             return q, Z
 
