@@ -1,9 +1,5 @@
     def sampling(n, gamma, algorithm = 'kurtosis-matching'):
 
-        import time
-        import numpy as np
-        from scipy import stats, optimize
-
         def aux(n, gamma):
             i = np.arange(1, 0.5*(n+1), dtype = int)
             i = np.hstack([i, i[::-1]] if n % 2 == 0 \
@@ -141,10 +137,6 @@
 
 
     def lp(z, q, t, tol = 1e-12, extra_precision = False):
-
-        import time
-        import numpy as np
-        from scipy import optimize
 
         def objective(z, a, beta, normalize):
             F = (np.abs(a-beta*a.transpose()) ** 3).transpose()\
