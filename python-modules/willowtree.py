@@ -145,7 +145,7 @@ def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
         return q, z.x, gamma
 
 
-    def lp(z, q, t, tol = 1e-12, extra_precision = False):
+    def lp(z, q, k, tol = 1e-12, extra_precision = False):
 
         def objective(z, a, beta, normalize):
             F = (np.abs(a-beta*a.transpose()) ** 3).transpose()\
@@ -182,6 +182,7 @@ def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
 
 
         initial_tol = tol
+        t = np.linspace(0, 1, k + 1)
 
         u = np.ones(len(z), dtype = np.int)
         r = z ** 2
