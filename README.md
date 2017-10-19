@@ -76,4 +76,6 @@ Presently, `willowtree` only handles one-dimensional lattices, implemented accor
 ## Known Issues
 - _Inability to choose gamma = 0, with gamma in [0, 1], as parameter value in the model._ Commit `f014907` partially fixes the issue by increasing gamma by steps of 1e-9 (first two seconds of runtime), 1e-6 (additional 8 seconds), and 1e-2 until the optimisation is successful. This method ensures that a solution is found with a value of gamma as close as possible to the one supplied by the user, and in a reasonable amount of time.
 
+- _Significant slowness for n > 20._ The bottleneck is the linear programming algorithm: each iteration (for a particular tolerance level) may take a very long time, and cannot be stopped unless the optimizer is run in a separate process, using Python's `multiprocessing` module. This may not be a problem if the matrices are to be stored and used at a later time, but it is nevertheless something that should be dealt with.
+
 For a list of all open and closed issues, please visit the [issue section](https://github.com/federicomariamassari/willow-tree/issues?utf8=✓&q=).
