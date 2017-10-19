@@ -243,29 +243,55 @@ def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
             failure = np.nonzero(flag)[0]
             success = np.nonzero(flag + 1)[0]
 
-        try:
+try:
             minvec = np.array([], dtype = np.int)
             maxvec = minvec
 
-            for i in range(len(failure)):
-                minvec = np.append(minvec, [max(x for x in success \
-                                            if x < failure[i])])
-                maxvec = np.append(maxvec, [min(x for x in success \
-                                            if x > failure[i])])
-
+            for i in reversed(range(len(failure))):
+                minvec = np.append(minvec, [max(x for x in success if x < failure[i])])
+                minvec.sort()
         except ValueError:
             pass
 
-        if flag[-1] == -1:
-            threshold = max(minvec) + 1
-            failure = failure[failure < threshold]
-        elif (flag == -1).any():
-            threshold = max(maxvec)
-            failure = failure[failure < threshold]
-        else:
+        try:
+            for i in range(len(failure)):
+                maxvec = np.append(maxvec, [min(x for x in success if x > failure[i])])
+        except ValueError:
             pass
 
-        minvec = minvec[:len(maxvec)]
+        repl_min = np.full(len(flag), -1, dtype=np.int)
+        repl_max = np.full(len(flag), -1, dtype=np.int)
+
+        for i in failure:
+            repl_min[i] = 1
+            repl_max[i] = 1
+
+        minvec = np.pad(minvec, ((len(failure)-len(minvec)),0),
+                        mode='constant', constant_values=-1)
+        repl_min[repl_min>0] = minvec
+
+        maxvec = np.pad(maxvec, (0,len(failure) - len(maxvec)),
+                        mode='constant', constant_values=-1)
+        repl_max[repl_max>0] = maxvec
+
+        succ_vec = (repl_min > -1) & (repl_min < repl_max)
+        succ_vec = np.array([1 if succ_vec[i] == True else 0 for i \
+                             in range(len(succ_vec))])
+
+        try:
+            threshold_low = np.argwhere(succ_vec)[0,0]
+            threshold_high = np.argwhere(succ_vec)[-1,0]
+        except:
+            threshold_low, threshold_high = -1, -1
+
+        failure = failure[(failure >= threshold_low) \
+                        & (failure <= threshold_high)]
+
+        minvec = repl_min * succ_vec
+        maxvec = repl_max * succ_vec
+
+        minvec = minvec[minvec > -1]
+        maxvec = maxvec[maxvec > 0]
 
         if (flag == -1).any():
             try:
@@ -285,9 +311,17 @@ def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
         success = np.nonzero(flag + 1)[0]
         Px = Px[success]
 
-        t_new = t[range(len(success)+2)]
-
+        if success[0] == 0:
+            t_new = t[range(len(success)+2)]
+        else:
+            t_new = np.append(0,t[(t >= t[success[1]]) \
+                                & (t <= t[success[-1]+2])])
+           
+        if t_new[1] != t[1]:
+            print('Warning: t has been increased. t[1] = {:.2f}'\
+                  .format(t_new[1]))
         if t_new[-1] != t[-1]:
-            print('Warning: t has been shortened. T = {:.2f}'.format(t_new[-1]))
+            print('Warning: t has been shortened. T = {:.2f}'\
+                  .format(t_new[-1]))
 
         return Px, t_new
