@@ -8,6 +8,44 @@ def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
     import seaborn as sns
 
 def sampling(n, gamma, algorithm = 'kurtosis-matching'):
+'''
+Retrieve the sequence of discrete density pairs {z(i), q(i)} for i = 1, ..., n
+using Xu, Hong, and Qin's methodology [1].
+
+Choose between kurtosis matching and first partial moment matching (more
+algorithms will be provided in future versions).
+
+ - Kurtosis matching strategy. Best suited for deep out-of-the-money
+   derivatives.
+ - First partial moment matching strategy: Best suited for very near-the-money
+   derivatives.
+
+*Input*
+n = int, required argument. The number of steps in the space dimension. The
+    algorithm will automatically increase the value of n if the optimisation
+    is unsuccessful with the desired parameter. However, this will occur only
+    if no gamma in [0, 1], and no tolerance up to 1e-3, will lead to feasible
+    solution with the provided n.
+gamma = float, required argument. Weight parameter governing the distribution
+        of probabilities {q(i)}. Admissible values in [0, 1]. The algorithm
+        will use a different value (as close as possible to the provided one)
+        in case optimisation with the desired parameter is unsuccessful.
+strategy = str, optional argument. Omit or set to 'kurtosis-matching', 'KRT',
+           or 'krt' for kurtosis matching. Set to 'first-partial-moment',
+           'FPM', or 'fpm' for first partial moment matching.
+
+*Example*
+q, z = sampling(11, 0.3, strategy = 'first-partial-moment')
+
+Compute the discrete density pairs {q(i), z(i)} for i = 1, ..., 11, attaching
+greater weight to those in the central part of the density (gamma = 0.3).
+The pairs are retrieved using the first partial moment matching strategy.
+
+*Resources*
+[1] Xu, W., Hong, Z. and Qin, C. (2013): A New Sampling Strategy Willow Tree
+Method With Application To Path-Dependent Option Pricing. Quantitative Finance,
+March 2013, 13(6): 861–872.
+'''
 
     def aux(n, gamma):
         i = np.arange(1, 0.5*(n+1), dtype = int)
