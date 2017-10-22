@@ -7,6 +7,12 @@ def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
     import matplotlib.pyplot as plt
     import seaborn as sns
 
+    q, z, gamma = sampling(n, gamma)
+    P, t = lp(z, q, k, tol = tol, extra_precision = extra_precision)
+    graph(z, q, gamma, t, P)
+
+    return q, z, P, t
+
 def sampling(n, gamma, algorithm = 'kurtosis-matching'):
     '''
     Generate a sequence of discrete density pairs {z(i), q(i)}, for i = 1, ...,
