@@ -73,6 +73,11 @@ Presently, `willowtree` only handles one-dimensional lattices, implemented accor
 - presenting more algorithms to build the tree (e.g. [Haussmann and Yan](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.7988&rep=rep1&type=pdf), 2004);
 - accounting for multi-dimensionality.
 
+## Latest Updates
+Following commit `ab317d5` the willow tree has become a very precise and robust algorithm. It returns well-behaved Markov chains by generating accurate transition matrices and, if this is not possible, by either replacing wrong ones with interpolated versions (giving rise to the characteristic _black patches_, as in the figure below) or shortening the chain as appropriate. 
+
+<img src = 'handbook/img/20-50-precise.png' alt = 'willow-tree' width = '500'>
+
 ## Known Issues
 - _Inability to choose gamma = 0, with gamma in [0, 1], as parameter value in the model._ Commit `f014907` partially fixes the issue by increasing gamma by steps of 1e-9 (first two seconds of runtime), 1e-6 (additional 8 seconds), and 1e-2 until the optimisation is successful. This method ensures that a solution is found with a value of gamma as close as possible to the one supplied by the user, and in a reasonable amount of time.
 
