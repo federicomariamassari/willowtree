@@ -93,7 +93,7 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
     '''
 
     # Define auxiliary functions to compute the discrete density pairs
-    def aux(n, gamma):
+    def prob(n, gamma):
         '''
         Generate q, the array of probabilities governing the width of the
         strata, and Z, the strata themselves.
@@ -115,6 +115,10 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
         q = (i-0.5)**gamma / n
         q = q / np.sum(q)
 
+        return q
+
+
+    def bounds(q):
         '''
         Compute Z, the array of bounds for the standard normal variates {z(i)}
         (the endpoints of the strata). Set Z[0] and Z[-1] to, respectively,
@@ -123,9 +127,9 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
         Z = np.hstack([[-np.inf], stats.norm.ppf(np.cumsum(q[:-1])), \
                        [np.inf]])
 
-        return q, Z
+        return Z
 
-    def aux2(q, Z, algorithm):
+    def variates(q, Z, algorithm):
         '''
         Compute z, the sequence of representative standard normal variates.
         '''
@@ -208,15 +212,18 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
     if gamma < 1), then generate q and Z.
     '''
     if 0 <= gamma <= 1:
-        q, Z = aux(n, gamma)
+        q = prob(n, gamma)
+        Z = bounds(q)
     elif gamma < 0:
         print('Gamma out of range, must be in [0, 1]. Setting to 0.')
         gamma = 0
-        q, Z = aux(n, gamma)
+        q = prob(n, gamma)
+        Z = bounds(q)
     else:
         print('Gamma out of range, must be in [0, 1]. Setting to 1.')
         gamma = 1
-        q, Z = aux(n, gamma)
+        q = prob(n, gamma)
+        Z = bounds(q)
 
     '''
     Generate z, the array of standard normal variates, from q and Z, then test
@@ -226,7 +233,7 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
      - z.fun is the value of the objective function, 'fun';
      - z.status is the output flag: 0 if successful, != 0 otherwise.
     '''
-    z = aux2(q, Z, algorithm)
+    z = variates(q, Z, algorithm)
     test_result = test(q, z.x, algorithm)
 
     '''
@@ -262,16 +269,18 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                     gamma += 1e-6
                 else:
                     gamma += 1e-2
-                q, Z = aux(n, gamma)
-                z = aux2(q, Z, algorithm)
+                q = prob(n, gamma)
+                Z = bounds(q)
+                z = variates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
             # Raise counter by 1 and reset gamma to 0 if gamma reaches 1
             elif (gamma == 1) & (counter <= 1):
                 gamma = 0
                 counter +=1
-                q, Z = aux(n, gamma)
-                z = aux2(q, Z, algorithm)
+                q = prob(n, gamma)
+                Z = bounds(q)
+                z = vaariates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
             # Increase n by one unit after a full increasing cycle of gamma
@@ -279,8 +288,9 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                 gamma = initial_gamma
                 counter = 0
                 n += 1
-                q, Z = aux(n, gamma)
-                z = aux2(q, Z, algorithm)
+                q = prob(n, gamma)
+                Z = bounds(q)
+                z = variates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
         # If the input value of gamma is equal to one:
@@ -294,16 +304,18 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                     gamma -= 1e-6
                 else:
                     gamma -= 1e-2
-                q, Z = aux(n, gamma)
-                z = aux2(q, Z, algorithm)
+                q = prob(n, gamma)
+                Z = bounds(q)
+                z = variates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
             # Raise counter by 1 and reset gamma to 1 if gamma reaches 0
             elif (gamma == 0) & (counter <= 1):
                 gamma = 1
                 counter +=1
-                q, Z = aux(n, gamma)
-                z = aux2(q, Z, algorithm)
+                q = prob(n, gamma)
+                Z = bounds(q)
+                z = variates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
             # Increase n by one unit after a full decreasing cycle of gamma
@@ -312,8 +324,9 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                 counter = 0
                 start = time.time()
                 n += 1
-                q, Z = aux(n, gamma)
-                z = aux2(q, Z, algorithm)
+                q = prob(n, gamma)
+                Z = bounds(q)
+                z = variates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
     '''
