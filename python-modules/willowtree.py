@@ -372,6 +372,13 @@ def lp(z, q, k, tol = 1e-12, extra_precision = False):
                              options = options)
         return P
 
+    def test(n, P):
+        try:
+            P = P.reshape(n,n)
+            return np.isclose(P.sum(axis=1), np.ones(n), 1e-6).all() == True
+        except:
+            return False
+
     def interpolate(P_min, P_max, alpha_min, alpha_max, alpha_interp):
         x1 = 1 / np.sqrt(1+alpha_min)
         x2 = 1 / np.sqrt(1+alpha_max)
@@ -384,6 +391,7 @@ def lp(z, q, k, tol = 1e-12, extra_precision = False):
 
 
     initial_tol = tol
+    n = len(z)
     t = np.linspace(0, 1, k + 1)
 
     u = np.ones(len(z), dtype = np.int)
@@ -418,7 +426,8 @@ def lp(z, q, k, tol = 1e-12, extra_precision = False):
         if type(P.x) != np.float:
             start = time.time()
             while (P.status != 0) | (P.fun < 0) | (P.fun > 1) \
-                | ((P.x[P.x < 0]).any()) | ((P.x[P.x > 1]).any()):
+                | ((P.x[P.x < 0]).any()) | ((P.x[P.x > 1]).any()) \
+                | (test(n, P.x) != True):
 
                 if (tol < 1e-3) & (time.time() - start < 60):
                     tol *= 10
