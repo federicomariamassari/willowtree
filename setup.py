@@ -14,7 +14,7 @@ setup(
     description='''Robust and flexible Python implementation of the willow
     tree lattice for derivatives pricing.''',
 
-    url='https://github.com/federicomariamassari/willow-tree'
+    url='https://github.com/federicomariamassari/willow-tree',
 
     author='Federico Maria Massari',
     author_email='federico.massari@bocconialumni.it',
@@ -36,11 +36,10 @@ setup(
     ],
 
     packages=[
-    'willowtree'
+    'python-modules'
     ],
 
     install_requires=[
-    'time',
     'numpy >= 1.13',
     'scipy >= 0.19',
     'matplotlib >= 2.0',
