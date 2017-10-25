@@ -525,7 +525,7 @@ def lp(z, q, k, tol = 1e-12, extra_precision = False):
     if success[0] == 0:
         t_new = t[range(len(success)+2)]
     else:
-        t_new = np.append(0,t[(t >= t[success[1]]) \
+        t_new = np.append(0,t[(t >= t[success[0]+1]) \
                             & (t <= t[success[-1]+2])])
 
     if t_new[1] != t[1]:
