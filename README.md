@@ -63,7 +63,7 @@ Finally, call any of its modules, e.g. `sampling`, as either: `willowtree.sampli
 `willowtree` is offered under the MIT License.
 
 ## Contributing
-`willowtree` is a small but continuously evolving project open to anyone willing to contribute—simply fork the repository and modify its content. Any improvements, especially in making the code more readable (or _Pythonic_) is more than welcome. For git commits, it is desirable to follow [Udacity's Git Commit Message Style Guide](https://udacity.github.io/git-styleguide/).
+`willowtree` is a small but continuously evolving project open to anyone willing to contribute—simply fork the repository and modify its content. Any improvements, especially in making the code more readable (or _Pythonic_) or faster is more than welcome. For git commits, it is desirable to follow [Udacity's Git Commit Message Style Guide](https://udacity.github.io/git-styleguide/).
 
 Feel free to bookmark, or "star", the repository if you find this project interesting!
 
