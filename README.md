@@ -81,7 +81,7 @@ Following commit `ab317d5` the willow tree has become a very precise and robust 
 
 <img src = 'handbook/img/20-50-precise.png' alt = 'willow-tree' width = '500'>
 
-Why the black patches? Adjacent, well-defined transition matrices have positive probabilities in different cells. When these matrices are interpolated, the resulting object is less sparse, with a larger number of paths drawn.
+Why the black patches? Adjacent, well-defined transition matrices have positive probabilities in different cells. When these matrices are used to interpolate one in between, the resulting object is less sparse, with a larger number of paths drawn.
 
 ## Known Issues
 - _Inability to choose gamma = 0, with gamma in [0, 1], as parameter value in the model._ Commit `f014907` partially fixes the issue by increasing gamma by steps of 1e-9 (first two seconds of runtime), 1e-6 (additional 8 seconds), and 1e-2 until the optimisation is successful. This method ensures that a solution is found with a value of gamma as close as possible to the one supplied by the user, and in a reasonable amount of time.
