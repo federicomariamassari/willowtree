@@ -573,7 +573,7 @@ def graph(z, q, gamma, t, P):
     l2 = [ax.plot(W[i,:2], W[i,2:4], 'k') for i in range(len(W)) if W[i,4] > 0]
     plt.setp((l1, l2), linewidth = 0.5)
     ax.set(title = \
-    'Willow Tree, $n$ = {} space points, $k$ = {} time nodes, $\gamma$ = {}'\
+    'Willow Tree, $n$ = {} space points, $k$ = {} time steps, $\gamma$ = {}'\
         .format(n, k - 1, gamma), xlabel = 'Time', ylabel = 'Space')
     ax.invert_yaxis()
     plt.show()
