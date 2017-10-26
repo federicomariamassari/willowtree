@@ -522,18 +522,22 @@ def lp(z, q, k, tol = 1e-12, extra_precision = False):
     success = np.nonzero(flag + 1)[0]
     Px = Px[success]
 
-    if success[0] == 0:
-        t_new = t[range(len(success)+2)]
-    else:
-        t_new = np.append(0,t[(t >= t[success[0]+1]) \
-                            & (t <= t[success[-1]+2])])
+    try:
+        if success[0] == 0:
+            t_new = t[range(len(success)+2)]
+        else:
+            t_new = np.append(0,t[(t >= t[success[0]+1]) \
+                                & (t <= t[success[-1]+2])])
 
-    if t_new[1] != t[1]:
-        print('Warning: t has been increased. t[1] = {:.2f}'\
-              .format(t_new[1]))
-    if t_new[-1] != t[-1]:
-        print('Warning: t has been shortened. T = {:.2f}'\
-              .format(t_new[-1]))
+        if t_new[1] != t[1]:
+            print('Warning: t has been increased. t[1] = {:.2f}'\
+                  .format(t_new[1]))
+        if t_new[-1] != t[-1]:
+            print('Warning: t has been shortened. T = {:.2f}'\
+                  .format(t_new[-1]))
+    except:
+        t_new = t[:2]
+        print('Warning: t has been shortened. T = {:.2f}'.format(t_new[-1]))
 
     return Px, t_new
 
@@ -549,18 +553,22 @@ def graph(z, q, gamma, t, P):
 
     G = z[:, np.newaxis] @ np.sqrt(t)[np.newaxis]
 
-    n, k = len(z), len(t)
+    n, k = len(z), len(t)-1
 
+    if k > 1:
+        initial = np.array([np.zeros(n), np.full(n, t[1]), G[:,0], G[:,1], q])
+        start_date = aux1(aux2(t[1:-1], (n ** 2)), n, t)
+        end_date = aux1(aux2(t[2:], (n ** 2)), n, t)
+        start_node = aux1(aux2(G[:,1:-1], (n, 1)), n, t)
+        end_node = aux1(aux2(G[:,2:], n), n, t)
+        transition = aux1(np.hstack(P), n, t)
 
-    initial = np.array([np.zeros(n), np.full(n, t[1]), G[:,0], G[:,1], q])
-    start_date = aux1(aux2(t[1:-1], (n ** 2)), n, t)
-    end_date = aux1(aux2(t[2:], (n ** 2)), n, t)
-    start_node = aux1(aux2(G[:,1:-1], (n, 1)), n, t)
-    end_node = aux1(aux2(G[:,2:], n), n, t)
-    transition = aux1(np.hstack(P), n, t)
+        W = np.vstack((start_date, end_date, start_node, end_node, transition))
+        W = np.hstack((initial, W)).transpose()
 
-    W = np.vstack((start_date, end_date, start_node, end_node, transition))
-    W = np.hstack((initial, W)).transpose()
+    else:
+        initial = np.array([np.zeros(n), np.full(n, t[1]), G[:,0], G[:,1], q])
+        W = initial.transpose()
 
     steps = np.linspace(0, t[-1], 1000)
     square_root = np.sqrt(steps) * z[n - 1]
@@ -574,6 +582,6 @@ def graph(z, q, gamma, t, P):
     plt.setp((l1, l2), linewidth = 0.5)
     ax.set(title = \
     'Willow Tree, $n$ = {} space points, $k$ = {} time steps, $\gamma$ = {}'\
-        .format(n, k - 1, gamma), xlabel = 'Time', ylabel = 'Space')
+        .format(n, k, gamma), xlabel = 'Time', ylabel = 'Space')
     ax.invert_yaxis()
     plt.show()
