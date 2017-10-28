@@ -36,18 +36,19 @@ A detailed history of the model, as well as the mathematical theory behind it, a
 
 ## Installation
 The source code is currently hosted on GitHub at: https://github.com/federicomariamassari/willow-tree.
-Either clone or download the git repository. Then, on Command Window (Windows) or Terminal (OS X) navigate through folders `willow-tree/python-modules` and execute:
-
+Either clone or download the git repository. To clone the repository, on either Terminal (macOS) or Command Prompt (Windows) enter the folder inside which you want the repository to be, possibly changing directory with `cd <desired path>`, and execute:
 ```shell
-$ python3 willowtree.py install
+$ git clone https://github.com/federicomariamassari/willow-tree.git
 ```
-
-or, if only Python 3 is present, simply:
+When the process is over, navigate through folder `willow-tree` using `cd willow-tree` and run:
 ```shell
-$ python willowtree.py install
+$ python3 setup.py install
 ```
-
-Then, within the Python environment, execute:
+or, if only Python 3 is present on your system, simply:
+```shell
+$ python setup.py install
+```
+Then, within a Python environment, e.g. IDLE or Jupyter Notebook, execute:
 ```python
 import willowtree
 ```
@@ -55,9 +56,9 @@ or use `wt` as alias:
 ```python
 import willowtree as wt
 ```
-
 Finally, call any of its modules, e.g. `sampling`, as either: `willowtree.sampling` or `wt.sampling` based on the previous choice.
 
+To check which version of `willowtree` is actually installed, use `willowtree.__version__`.
 
 ## License
 `willowtree` is offered under the MIT License.
@@ -77,7 +78,7 @@ Presently, `willowtree` only handles one-dimensional lattices, implemented accor
 
 _October 24, 2017_
 
-Following commit `ab317d5` the willow tree has become a very precise and robust algorithm. It returns well-behaved Markov chains by generating accurate transition matrices and, if this is not possible, by either replacing wrong ones with interpolated versions (giving rise to the characteristic _black patches_, as in the figure below) or shortening the chain as appropriate. 
+Following commit `ab317d5` the willow tree has become a very precise and robust algorithm. It returns well-behaved Markov chains by generating accurate transition matrices and, if this is not possible, by either replacing wrong ones with interpolated versions (giving rise to the characteristic _black patches_, as in the figure below) or shortening the chain as appropriate.
 
 <img src = 'handbook/img/20-50-precise.png' alt = 'willow-tree' width = '500'>
 
