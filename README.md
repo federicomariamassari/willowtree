@@ -76,6 +76,10 @@ Presently, `willowtree` only handles one-dimensional lattices, implemented accor
 
 ## Latest Updates
 
+_October 28, 2017_
+
+Following commit `3531721`, `willowtree` is now a package which can be installed from `setup.py`.
+
 _October 24, 2017_
 
 Following commit `ab317d5` the willow tree has become a very precise and robust algorithm. It returns well-behaved Markov chains by generating accurate transition matrices and, if this is not possible, by either replacing wrong ones with interpolated versions (giving rise to the characteristic _black patches_, as in the figure below) or shortening the chain as appropriate.
