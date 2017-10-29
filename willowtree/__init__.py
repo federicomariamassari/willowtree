@@ -7,8 +7,8 @@ the current directory (.) and import <attribute>.
 <attribute> will now be available to call as willowtree.<attribute>, instead
 of as willowtree.<module>.<attribute>.
 
-For example, on Terminal or Command Window the following commands will both
-run function maketree:
+For example, on Terminal (macOS) or Command Prompt (Windows), the following
+commands will both run function maketree:
 
 $ python3
 >>> import willowtree
