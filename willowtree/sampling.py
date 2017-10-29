@@ -41,6 +41,9 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
         * q is the set of probabilities associated to z and governing the width
           of the strata.
 
+    gamma: float, the new value of gamma. If optimisation is successful with
+           the supplied value, input and new gamma will coincide.
+
     How does the algorithm work?
     ---------------------------------------------------------------------------
     Suppose you want to obtain {z(i), q(i)}, for i = 1, ..., 14, a 14-element
@@ -64,11 +67,12 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
 
     Example
     ---------------------------------------------------------------------------
-    q, z = sampling(n = 14, gamma = 0, algorithm = 'first-partial-moment')
+    q, z, gamma = sampling(n=14, gamma=0, algorithm='first-partial-moment')
 
     Compute the discrete density pairs with n = 14 space points, gamma = 0.
     With gamma 0 the problem is infeasible. An optimal solution is found with
-    n = 14 and gamma = 0.000000032 (increased by 1e-9 32 times).
+    n = 14 and gamma = 0.000000032 (increased by 1e-9 32 times). The function
+    then returns arrays q, z, and the new value gamma = 3.2e-8.
 
     Resources
     ---------------------------------------------------------------------------
