@@ -60,6 +60,8 @@ Finally, call any of its modules, e.g. `sampling`, as either: `willowtree.sampli
 
 To check which version of `willowtree` is actually installed, use `willowtree.__version__`.
 
+For help on individual functions, call the built-in function `help`, e.g. `help(willowtree.sampling)` or `help(sampling)` if you chose `from willowtree import sampling`.
+
 ## License
 `willowtree` is offered under the MIT License.
 
