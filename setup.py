@@ -55,7 +55,7 @@ setup(
     license='MIT',
 
     classifiers=[
-    'Development Status :: 4 - Beta',
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Financial and Insurance Industry',
     'Topic :: Scientific/Engineering :: Mathematics',
     'License :: OSI Approved :: MIT License',
