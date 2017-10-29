@@ -274,7 +274,7 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
                 counter +=1
                 q = prob(n, gamma)
                 Z = bounds(q)
-                z = vaariates(q, Z, algorithm)
+                z = variates(q, Z, algorithm)
                 test_result = test(q, z.x, algorithm)
 
             # Increase n by one unit after a full increasing cycle of gamma
