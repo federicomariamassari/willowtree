@@ -25,7 +25,7 @@ Being a proxy for the standard Brownian motion, `willowtree` can:
 - serve as building block for more complex processes (e.g. the geometric Brownian motion) and models (e.g. GARCH conditional volatility), of particular relevance in finance, engineering, and physics.
 
 ## Documentation
-A detailed history of the model, as well as the mathematical theory behind it, are available in the [companion handbook]().
+A detailed history of the model, as well as the mathematical theory behind it, are available in the [companion handbook](https://nbviewer.jupyter.org/github/federicomariamassari/willow-tree/blob/master/handbook/01.ipynb).
 
 ## Dependencies
 `willowtree` requires Python 3.5+, and is built on top of the following modules:
