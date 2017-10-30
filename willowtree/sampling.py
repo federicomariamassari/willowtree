@@ -155,8 +155,8 @@ def sampling(n, gamma, algorithm = 'kurtosis-matching'):
         x0 = np.full(n, 1e-6)
         constraints = ({'type': 'eq', 'fun': lambda z: q @ z},
                        {'type': 'eq', 'fun': lambda z: q @ (z**2) - 1},
-                       {'type': 'eq', 'fun': lambda z: np.sum(z)},
-                       {'type': 'eq', 'fun': lambda z: z[0] + z[-1]})
+                       {'type': 'eq', 'fun': lambda z: z[:np.int((n+1)/2)] \
+                       + z[np.int(n/2):][::-1]})
         bounds = np.column_stack((Z[:-1], Z[1:]))
         options = {'disp': False, 'ftol': 1e-15, 'maxiter': 1e4}
 
