@@ -1,4 +1,4 @@
-def lp(z, q, k, tol = 1e-12, extra_precision = False):
+def lp(z, q, k, tol = 1e-9, extra_precision = False):
 
     import time
     import numpy as np
