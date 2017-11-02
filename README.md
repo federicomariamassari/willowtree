@@ -74,7 +74,7 @@ Feel free to bookmark, or "star", the repository if you find this project intere
 Presently, `willowtree` only handles one-dimensional lattices, implemented according to [Xu, Hong, and Qin's methodology](https://www.researchgate.net/publication/263268910_A_new_sampling_strategy_willow_tree_method_with_application_to_path-dependent_option_pricing). Future versions will try to focus on:
 
 - presenting more algorithms to build the tree (e.g. [Haussmann and Yan](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.136.7988&rep=rep1&type=pdf), 2004);
-- accounting for multi-dimensionality (e.g. [Ho](https://open.library.ubc.ca/cIRcle/collections/ubctheses/831/items/1.0080017), 2001 and [Lu and Xu](https://www.researchgate.net/publication/312622137_A_Simple_and_Efficient_Two-Factor_Willow_Tree_Method_for_Convertible_Bond_Pricing_with_Stochastic_Interest_Rate_and_Default_Risk), 2017).
+- accounting for multi-dimensionality (e.g. [Lu and Xu](https://www.researchgate.net/publication/312622137_A_Simple_and_Efficient_Two-Factor_Willow_Tree_Method_for_Convertible_Bond_Pricing_with_Stochastic_Interest_Rate_and_Default_Risk), 2017).
 
 ## Latest Updates
 
