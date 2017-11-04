@@ -22,7 +22,7 @@ These features increase the efficiency of the lattice, because they force the pa
 Being a proxy for the standard Brownian motion, `willowtree` can:
 - help price a wide array of European and American derivative contracts;
 - be considerably faster than other lattices, such as the binomial and trinomial, especially in higher dimensions: once a set of transition matrices is generated, it can be stored and becomes available for future use;
-- serve as building block for more complex processes (e.g. the geometric Brownian motion) and models (e.g. GARCH conditional volatility), of particular relevance in finance, engineering, and physics.
+- serve as building block for more complex processes (e.g. the geometric Brownian motion) and models (e.g. stochastic volatility, interest rate), of particular relevance in finance, engineering, and physics.
 
 ## Documentation
 A detailed history of the model, as well as the mathematical theory behind it, are available in the [companion handbook](https://nbviewer.jupyter.org/github/federicomariamassari/willow-tree/blob/master/handbook/01.ipynb).
