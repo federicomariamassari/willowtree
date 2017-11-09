@@ -5,7 +5,7 @@ computer.
 How does it work?
 -------------------------------------------------------------------------------
 On Terminal (macOS) or Command Prompt (Windows), navigate through folder
-'willow-tree', then run ($ is the Terminal prompt):
+'willowtree', then run ($ is the Terminal prompt):
 
 $ python3 setup.py install
 
@@ -47,7 +47,7 @@ setup(
     description='''Robust and flexible Python implementation of the willow
     tree lattice for derivatives pricing.''',
 
-    url='https://github.com/federicomariamassari/willow-tree',
+    url='https://github.com/federicomariamassari/willowtree',
 
     author='Federico Maria Massari',
     author_email='federico.massari@bocconialumni.it',
