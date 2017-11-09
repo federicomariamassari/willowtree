@@ -25,7 +25,7 @@ Being a proxy for the standard Brownian motion, `willowtree` can:
 - serve as building block for more complex processes (e.g. the geometric Brownian motion) and models (e.g. stochastic volatility, interest rate), of particular relevance in finance, engineering, and physics.
 
 ## Documentation
-A detailed history of the model, as well as the mathematical theory behind it, are available in the [companion handbook](https://nbviewer.jupyter.org/github/federicomariamassari/willow-tree/blob/master/handbook/01.ipynb).
+A detailed history of the model, as well as the mathematical theory behind it, are available in the [companion handbook](https://nbviewer.jupyter.org/github/federicomariamassari/willowtree/blob/master/handbook/01.ipynb).
 
 ## Dependencies
 `willowtree` requires Python 3.5+, and is built on top of the following modules:
@@ -35,12 +35,12 @@ A detailed history of the model, as well as the mathematical theory behind it, a
 - **Seaborn**: v. 0.8+
 
 ## Installation
-The source code is currently hosted on GitHub at: https://github.com/federicomariamassari/willow-tree.
+The source code is currently hosted on GitHub at: https://github.com/federicomariamassari/willowtree.
 Either clone or download the git repository. To clone the repository, on either Terminal (macOS) or Command Prompt (Windows) enter the folder inside which you want the repository to be, possibly changing directory with `cd <desired path>`, and execute:
 ```shell
-$ git clone https://github.com/federicomariamassari/willow-tree.git
+$ git clone https://github.com/federicomariamassari/willowtree.git
 ```
-When the process is over, navigate through folder `willow-tree` using `cd willow-tree` and run:
+When the process is over, navigate through folder `willowtree` using `cd willowtree` and run:
 ```shell
 $ python3 setup.py install
 ```
@@ -95,4 +95,4 @@ Why the black patches? Adjacent, well-defined transition matrices have positive 
 
 - _Significant slowness for n > 20._ The bottleneck is the linear programming algorithm: each iteration (for a particular tolerance level) may take a very long time, and cannot be stopped unless the optimizer is run in a separate process, using Python's `multiprocessing` module. This may not be a problem if the matrices are to be stored and used at a later time, but it is nevertheless something that should be dealt with.
 
-For a list of all open and closed issues, please visit the [issue section](https://github.com/federicomariamassari/willow-tree/issues?utf8=✓&q=).
+For a list of all open and closed issues, please visit the [issue section](https://github.com/federicomariamassari/willowtree/issues?utf8=✓&q=).
