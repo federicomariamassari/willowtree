@@ -1,5 +1,59 @@
 def lp(z, q, k, tol = 1e-9, extra_precision = False):
+    '''
+    Generate a time-inhomogeneous, discrete time Markov chain for the willow
+    tree [1] via linear programming (LP), using the discrete density pairs
+    {z(i), q(i)}, for i = 1, ..., n, output of the function 'sampling'.
 
+    The willow tree linear programming problem is:
+
+                                      c'x
+                         subject to:
+                                      A_eq * x = b_eq
+                                      p(k; i,j) >= 0
+
+    with:
+
+     * c: the vector of coefficients of the linear objective function;
+     * A_eq: a matrix of linear equality constraints;
+     * b_eq: a vector of linear equality constraints;
+     * p(k; i,j): transition probability at position (i,j) in the k-th
+                  transition matrix;
+     * x: the array solution to the problem.
+
+    Each solution x, when reshaped, is a transition matrix P(k), for k = 1,
+    ..., n-1.
+
+    Input
+    ---------------------------------------------------------------------------
+    q, z: NumPy arrays, required arguments. The discrete density pairs, a
+          discrete approximation of the standard normal distribution. Output
+          of the function 'sampling';
+    k: int, required argument. The number of time steps. k-1 is the number of
+       transition matrices generated;
+    tol: float, generally in scientific notation, optional argument. Set the
+         precision of the solutions to the linear programming problems.
+    extra_precision: bool, optional argument. If True, set the upper bound of
+                     each variable p(i,j) in the LP problems to 1. Otherwise,
+                     leave it to None.
+
+    Output
+    ---------------------------------------------------------------------------
+    P: NumPy array. The Markov chain, whose elements are transition matrices.
+       P is 2-dim if either of the following is true: k = 2, len(t_new) = 3.
+       Otherwise, P is a 3-dim array with shape (k-1, len(z), len(z));
+    t_new: Numpy array.
+
+    How does the algorithm work?
+    ---------------------------------------------------------------------------
+
+
+    Resources
+    ---------------------------------------------------------------------------
+    [1] Curran, M. (2001). Willow Power: Optimizing Derivative Pricing Trees,
+        ALGO Research Quarterly, Vol. 4, No. 4, p. 15, December 2001.
+    '''
+
+    # Import required libraries
     import time
     import numpy as np
     from scipy import optimize
