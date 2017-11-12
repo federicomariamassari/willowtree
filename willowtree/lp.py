@@ -99,6 +99,8 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     ---------------------------------------------------------------------------
     [1] Curran, M. (2001). Willow Power: Optimizing Derivative Pricing Trees,
         ALGO Research Quarterly, Vol. 4, No. 4, p. 15, December 2001.
+    [2] Ho, A.C.T. (2000). Willow Tree. MSc Thesis in Mathematics, University
+        of British Columbia.
     '''
 
     # Import required libraries
@@ -172,70 +174,134 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         return coeff_min*P_min + coeff_max*P_max
 
     '''
-    [MODIFY]
-
+    Store the user defined tolerance level in variable 'initial_tol'. This is
+    the starting tolerance level for the solution to the LP problems.
+    The variable does not change, and it is the starting point for each set of
+    LP problems solved to determine a particular transition matrix. What varies
+    is a new variable 'tol', which originally takes on the value 'initial_tol'
+    but is then reduced by one degree of magnitude (e.g. from 1e-9 to 1e-8),
+    up to 1e-2, until a solution is found. If 'tol' reaches 1e-2 and still no
+    satisfactory solution is found, the transition matrix is labelled as badly
+    defined, 'tol' is again set to 'initial_tol', and a new set of LP problems
+    is run to determine the next transition matrix.
     '''
     initial_tol = tol
+
+    # Set n as the number of space nodes
     n = len(z)
+
+    # Generate the array of time nodes from k, the desired no. of time steps
     t = np.linspace(0, 1, k + 1)
 
+    # Define auxiliary variables for c, Aeq, beq [2]
     u = np.ones(len(z), dtype = np.int)
     r = z ** 2
     h = t[2:] - t[1:-1]
     alpha = h / t[1:-1]
     beta = 1 / np.sqrt(1+alpha)
 
+    '''
+    Define auxiliary variables for c, the objective function. Normalise the
+    objective, if necessary (if q was determined using gamma != 0).
+    '''
     a = z[:, np.newaxis] @ np.ones(len(z))[np.newaxis]
     normalize = np.kron(q, np.ones(len(z)))
 
+    # Determine c, the objective function for each LP problem
     c = np.array([objective(z, a, beta[i], normalize) \
                   for i in range(len(h))])
 
+    # Determine Aeq, the matrix of linear equality constraints [2]
     Aeq = np.vstack([np.kron(np.eye(len(z)), u),
                      np.kron(np.eye(len(z)), z),
                      np.kron(np.eye(len(z)), r),
                      np.kron(q, np.eye(len(z)))])
 
+    # Determine beq, the array of linear equality constraints [2]
     beq = np.array([beq(q, u, z, beta[i], Aeq) \
                     for i in range(len(h))])
 
+    # Preallocate memory for the 3-dim (or 2-dim) Markov chain
     Px = np.array([np.zeros([len(z), len(z)]) \
          for i in range(len(h))])
 
+    '''
+    Initialise 1-dim array 'flag' of length h, the one assumed for the full
+    Markov chain. By construction, 'flag' has null components, which are
+    either left unmodified if the procedure to find a transition matrix is
+    successful, or set to -1 otherwise.
+    '''
     flag = np.zeros(len(h), dtype = np.int)
 
+    '''
+    Begin procedure to find transition matrix, initially shaped as a 1-dim
+    array to speed computation.
+    '''
     for i in range(len(h)):
+        # Run one initial LP problem
         P = transition_matrix(z, c[i], Aeq, beq[i], tol,
                               extra_precision)
 
+        # If the returned matrix != np.nan (exit != 2, see above), continue
         if type(P.x) != np.float:
+
+            # Set timer. This will prevent the LP from being too time consuming
             start = time.time()
+
+            '''
+            Continue looking for a feasible solution unless one of the
+            following occurs:
+             * exit == 0 (satisfactory solution found);
+             * objective function in [0;1] (well-behaved matrix);
+             * all p(k; i,j) probabilities in [0;1];
+             * the tests for mean, variance, and kurtosis (if applicable) are
+               all passed;
+            '''
             while (P.status != 0) | (P.fun < 0) | (P.fun > 1) \
                 | ((P.x[P.x < 0]).any()) | ((P.x[P.x > 1]).any()) \
                 | (test(n, P.x) != True):
 
+                '''
+                If no satisfactory solution is found, and if both of the
+                following apply:
+                 * tolerance level still smaller than 1e-3; and
+                 * the elapsed time is less than one minute.
+                Increase tolerance by one order of magnitude and proceed with
+                a new LP problem.
+                '''
                 if (tol < 1e-3) & (time.time() - start < 60):
                     tol *= 10
                     P = transition_matrix(z, c[i], Aeq, beq[i], tol,
                                           extra_precision)
                 else:
+                    # Break process and set flag to -1 (bad matrix) otherwise
                     flag[i] = -1
                     break
 
+            # Reshape array solution to 2-dim transition matrix
             Px[i] = P.x.reshape(len(z), len(z))
 
         else:
+            '''
+            If the returned matrix is np.nan (exit == 2), set flag to -1
+            (badly defined) and pass to following matrix in the chain.
+            '''
             flag[i] = -1
 
-
+        # Inform user of the quality of the solution
         if flag[i] == -1:
             print('Warning: P[{}] wrongly specified.'.format(i))
             print('Replacing with interpolated matrix if possible.')
         else:
             print('P[{}] successfully generated.'.format(i))
 
+        '''
+        Set tolerance back to initial level for each new transition matrix to
+        determine.
+        '''
         tol = initial_tol
 
+        # [MODIFY]
         failure = np.nonzero(flag)[0]
         success = np.nonzero(flag + 1)[0]
 
