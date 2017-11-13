@@ -351,7 +351,8 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         the chain, if any.
         '''
         for i in reversed(range(len(failure))):
-            minvec = np.append(minvec, [max(x for x in success if x < failure[i])])
+            minvec = np.append(minvec, [max(x for x in success \
+                                            if x < failure[i])])
             minvec.sort()
     except ValueError:
         pass
@@ -362,7 +363,8 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         errors due to bad matrices at the end of the chain, if any.
         '''
         for i in range(len(failure)):
-            maxvec = np.append(maxvec, [min(x for x in success if x > failure[i])])
+            maxvec = np.append(maxvec, [min(x for x in success \
+                                            if x > failure[i])])
     except ValueError:
         pass
 
