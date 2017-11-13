@@ -301,14 +301,55 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         '''
         tol = initial_tol
 
-        # [MODIFY]
+        '''
+        Store the positions of all -1 flags in a new array 'failure' and those
+        of all 0 flags in a new array 'success'.
+        '''
         failure = np.nonzero(flag)[0]
         success = np.nonzero(flag + 1)[0]
 
     try:
+        '''
+        Initialise empty arrays 'minvec' and 'maxvec'. These arrays will be
+        useful to determine which matrices to use in order to interpolate the
+        badly defined transition matrices. Each component of 'minvec' and
+        'maxvec' is, respectively, a lower and an upper bound for a bad matrix.
+        For example, suppose the Markov chain is made of four matrices (k = 5)
+        and the flag vector is as such:
+
+        flag = np.array([0, -1, 0, -1])
+
+        This means that the first and third matrices are well-defined, whereas
+        the second and last ones are not. Arrays 'failure' and 'success' will
+        thus be:
+
+        failure = np.array([1, 3])
+        success = np.array([0, 2])
+
+        That is, well-defined matrices occur at position 0 and 2; bad ones at
+        positions 1 and 3.
+
+        'minvec' and 'maxvec' will then be:
+
+        minvec = np.array([0, 2])
+        maxvec = np.array([2])
+
+        So, the first bad matrix (position 1) has two well-defined adjacent
+        matrices: one in 0 (minvec element 0), the other in 2 (maxvec element
+        2). The second one (position 3) has only one well-defined adjacent
+        matrix, at position 2 (minvec element 2).
+
+        As a consequence, it is possible to interpolate the first matrix using
+        the adjacent arrays, but the second one needs to be scrapped.
+        '''
         minvec = np.array([], dtype = np.int)
         maxvec = minvec
 
+        '''
+        To retrieve 'minvec', start from the end of the chain and proceed
+        backwards, to avoid errors due to bad matrices at the beginning of
+        the chain, if any.
+        '''
         for i in reversed(range(len(failure))):
             minvec = np.append(minvec, [max(x for x in success if x < failure[i])])
             minvec.sort()
@@ -316,6 +357,10 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         pass
 
     try:
+        '''
+        To retrieve 'maxvec', start from the beginning of the chain to avoid
+        errors due to bad matrices at the end of the chain, if any.
+        '''
         for i in range(len(failure)):
             maxvec = np.append(maxvec, [min(x for x in success if x > failure[i])])
     except ValueError:
