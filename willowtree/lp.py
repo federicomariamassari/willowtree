@@ -194,7 +194,7 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     t = np.linspace(0, 1, k + 1)
 
     # Define auxiliary variables for c, Aeq, beq [2]
-    u = np.ones(len(z), dtype = np.int)
+    u = np.ones(n, dtype = np.int)
     r = z ** 2
     h = t[2:] - t[1:-1]
     alpha = h / t[1:-1]
@@ -204,25 +204,25 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     Define auxiliary variables for c, the objective function. Normalise the
     objective, if necessary (if q was determined using gamma != 0).
     '''
-    a = z[:, np.newaxis] @ np.ones(len(z))[np.newaxis]
-    normalize = np.kron(q, np.ones(len(z)))
+    a = z[:, np.newaxis] @ np.ones(n)[np.newaxis]
+    normalize = np.kron(q, np.ones(n))
 
     # Determine c, the objective function for each LP problem
     c = np.array([objective(z, a, beta[i], normalize) \
                   for i in range(len(h))])
 
     # Determine Aeq, the matrix of linear equality constraints [2]
-    Aeq = np.vstack([np.kron(np.eye(len(z)), u),
-                     np.kron(np.eye(len(z)), z),
-                     np.kron(np.eye(len(z)), r),
-                     np.kron(q, np.eye(len(z)))])
+    Aeq = np.vstack([np.kron(np.eye(n), u),
+                     np.kron(np.eye(n), z),
+                     np.kron(np.eye(n), r),
+                     np.kron(q, np.eye(n))])
 
     # Determine beq, the array of linear equality constraints [2]
     beq = np.array([beq(q, u, z, beta[i], Aeq) \
                     for i in range(len(h))])
 
     # Preallocate memory for the 3-dim (or 2-dim) Markov chain
-    Px = np.array([np.zeros([len(z), len(z)]) \
+    Px = np.array([np.zeros([n, n]) \
          for i in range(len(h))])
 
     '''
@@ -279,7 +279,7 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
                     break
 
             # Reshape array solution to 2-dim transition matrix
-            Px[i] = P.x.reshape(len(z), len(z))
+            Px[i] = P.x.reshape(n, n)
 
         else:
             '''
