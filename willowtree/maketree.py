@@ -1,5 +1,5 @@
-def maketree(n = 12, gamma = 0.1, algorithm = 'kurtosis-matching', k = 10,
-             tol = 1e-12, extra_precision = False):
+def maketree(n=12, gamma=0.1, algorithm='kurtosis-matching', k=10,
+             tol=1e-12, extra_precision=False):
 
     import time
     import numpy as np
