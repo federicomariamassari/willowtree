@@ -353,10 +353,16 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         for i in reversed(range(len(failure))):
             minvec = np.append(minvec, [max(x for x in success \
                                             if x < failure[i])])
+
+            # Sort ascending the resulting vector, which was computed backwards
             minvec.sort()
     except ValueError:
         pass
 
+    '''
+    Try separately for 'minvec' and 'maxvec', to prevent errors in one which
+    would not occur also in the other.
+    '''
     try:
         '''
         To retrieve 'maxvec', start from the beginning of the chain to avoid
@@ -368,6 +374,33 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     except ValueError:
         pass
 
+    '''
+    The following lines of code align the length of 'minvec' and 'maxvec' to
+    that of 'flag'. The purpose is to univocally assign unique minimum and
+    maximum values to each bad transition matrix, to identify the indices of
+    the adjacent matrices to be used in the interpolation step. An example
+    should clarify. Consider the following 'flag' vector:
+
+    flag = np.array([-1, 0, 0, -1, -1, 0, -1, 0])
+
+    The vector signals that there are bad transition matrices at positions 0,
+    3-4, and 6. Before aligning size, 'minvec' and 'maxvec' are:
+
+    minvec = np.array([2, 2, 5])
+    maxvec = np.array([5, 5, 7])
+
+    After aligning size, 'minvec' and 'maxvec' (now 'repl_min' and 'repl_max')
+    become:
+
+    repl_min = np.array([-1, -1, -1,  2,  2, -1,  5, -1])
+    repl_max = np.array([-1, -1, -1,  5,  5, -1,  7, -1])
+
+    This way, if possible, each bad matrix is univocally assigned two indices,
+    a minimum and a maximum, corresponding to the positions of the matrices to
+    use in the interpolation step. However, only three out of four bad matrices
+    have indices assigned (the beginning one has no minimum, therefore it will
+    be automatically scrapped).
+    '''
     repl_min = np.full(len(flag), -1, dtype=np.int)
     repl_max = np.full(len(flag), -1, dtype=np.int)
 
@@ -375,10 +408,12 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
         repl_min[i] = 1
         repl_max[i] = 1
 
+    # Only pad array with -1 on the left
     minvec = np.pad(minvec, ((len(failure)-len(minvec)),0),
                     mode='constant', constant_values=-1)
     repl_min[repl_min>0] = minvec
 
+    # Only pad arrays with -1 on the right
     maxvec = np.pad(maxvec, (0,len(failure) - len(maxvec)),
                     mode='constant', constant_values=-1)
     repl_max[repl_max>0] = maxvec
@@ -402,6 +437,11 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     minvec = minvec[minvec > -1]
     maxvec = maxvec[maxvec > 0]
 
+    '''
+    Interpolate bad matrices according to Curran's [1] methodology. If the
+    interpolation is successful, replace negative flags with 0 (success), then
+    substitute the matrices in the Markov chain.
+    '''
     if (flag == -1).any():
         try:
             Px[failure] = [interpolate(Px[minvec[i]], Px[maxvec[i]],
@@ -420,6 +460,10 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     success = np.nonzero(flag + 1)[0]
     Px = Px[success]
 
+    '''
+    Resize array t in case the generated Markov chain is shorter, either at
+    the beginning or at the end.
+    '''
     try:
         if success[0] == 0:
             t_new = t[range(len(success)+2)]
