@@ -404,16 +404,27 @@ def lp(z, q, k, tol = 1e-9, extra_precision = False):
     repl_min = np.full(len(flag), -1, dtype=np.int)
     repl_max = np.full(len(flag), -1, dtype=np.int)
 
+    '''
+    Replace -1 components in 'repl_min', 'repl_max', at positions corresponding
+    to the values in 'minvec', 'maxvec', with positive numbers 1, then to be
+    replaced by the actual components of 'minvec', 'maxvec' using masking.
+    '''
     for i in failure:
         repl_min[i] = 1
         repl_max[i] = 1
 
-    # Only pad array with -1 on the left
+    '''
+    Uniform 'minvec' length to that of 'repl_min'. Only pad array with -1 on
+    the left. Replace 'repl_min' components 1 with actual 'minvec' values.
+    '''
     minvec = np.pad(minvec, ((len(failure)-len(minvec)),0),
                     mode='constant', constant_values=-1)
     repl_min[repl_min>0] = minvec
 
-    # Only pad arrays with -1 on the right
+    '''
+    Uniform 'maxvec' length to that of 'repl_max'. Only pad array with -1 on
+    the right. Replace 'repl_max' components 1 with actual 'maxvec' values.
+    '''
     maxvec = np.pad(maxvec, (0,len(failure) - len(maxvec)),
                     mode='constant', constant_values=-1)
     repl_max[repl_max>0] = maxvec
