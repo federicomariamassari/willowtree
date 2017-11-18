@@ -1,5 +1,19 @@
 def graph(z, q, gamma, t, P):
+    '''
+    Plot the willow tree.
 
+    Input
+    ---------------------------------------------------------------------------
+    z, q: np.arrays, required arguments. The discrete density pairs, output of
+          the function 'sampling'.
+    gamma: float, required argument. Weighting parameter governing the shape of
+           the distribution of probabilities {q(i)} in 'sampling'.
+    t: np.array, required argument. The time array, a partition of [0, T].
+    P: np.array, 2-D or 3-D, required argument. The Markov chain, output of the
+       function 'lp'
+    '''
+
+    # Import required libraries
     import numpy as np
     import matplotlib.pyplot as plt
     import seaborn as sns
